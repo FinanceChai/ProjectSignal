@@ -2,7 +2,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, ConversationHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, filters, CallbackContext, ConversationHandler
 
 # Load environment variables from .env file
 load_dotenv()
