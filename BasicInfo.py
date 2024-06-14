@@ -96,8 +96,10 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         for social in pair['info']['socials']:
                             if social["type"].lower() == "twitter" and not twitter_handle:
                                 twitter_handle = extract_twitter_handle(social["url"])
+                                print(f"Twitter handle: {twitter_handle}")
                             if social["type"].lower() == "telegram" and not telegram_url:
                                 telegram_url = ensure_https(social["url"])
+                                print(f"Telegram URL: {telegram_url}")
 
                 pair_info = f"""
 Token: {base_token_name} ({base_token_symbol})
@@ -135,6 +137,8 @@ Volume (24h): {format_usd(total_volume_h24)}
                 # Remove the trailing " + " if it exists
                 if pair_info.endswith(" + "):
                     pair_info = pair_info[:-3]
+
+                print(pair_info)  # Debug statement to check final message format
 
                 await update.message.reply_text(pair_info, parse_mode='HTML')
             else:
