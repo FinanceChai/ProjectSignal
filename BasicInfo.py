@@ -13,6 +13,12 @@ TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 # Define the API base URL
 API_BASE_URL = "https://api.dexscreener.com/latest/dex/search?q="
 
+# Function to calculate buy/sell ratio
+def calculate_ratio(buys, sells):
+    if sells == 0:
+        return "N/A" if buys == 0 else f"{buys:.1f}x"
+    return f"{(buys / sells):.1f}x"
+
 # Function to search for token information
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.args:
@@ -25,12 +31,23 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             pairs = data.get('pairs', [])
             if pairs:
                 for pair in pairs:
+                    txns = pair.get('txns', {})
+                    buys_h1 = txns.get('h1', {}).get('buys', 0)
+                    sells_h1 = txns.get('h1', {}).get('sells', 0)
+                    buys_h6 = txns.get('h6', {}).get('buys', 0)
+                    sells_h6 = txns.get('h6', {}).get('sells', 0)
+                    buys_h24 = txns.get('h24', {}).get('buys', 0)
+                    sells_h24 = txns.get('h24', {}).get('sells', 0)
+                    
                     pair_info = f"""
 Base Token: {pair['baseToken']['name']} ({pair['baseToken']['symbol']})
 Pool URL: {pair['url']}
 Price (USD): {pair.get('priceUsd', 'N/A')}
 FDV: {pair.get('fdv', 'N/A')}
 Liquidity (USD): {pair['liquidity'].get('usd', 'N/A')}
+B/S Ratio (1h): {calculate_ratio(buys_h1, sells_h1)}
+B/S Ratio (6h): {calculate_ratio(buys_h6, sells_h6)}
+B/S Ratio (24h): {calculate_ratio(buys_h24, sells_h24)}
 Volume (1h): {pair['volume']['h1']}
 Volume (6h): {pair['volume']['h6']}
 Volume (24h): {pair['volume']['h24']}
