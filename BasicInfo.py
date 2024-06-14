@@ -23,6 +23,12 @@ def calculate_ratio(buys, sells):
 def format_usd(value):
     return f"${value:,.0f}"
 
+# Function to extract Twitter handle from URL
+def extract_twitter_handle(url):
+    if "twitter.com" in url:
+        return url.split("/")[-1]
+    return None
+
 # Function to search for token information
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.args:
@@ -69,6 +75,7 @@ Volume (1h): {format_usd(pair['volume']['h1'])}
 Volume (6h): {format_usd(pair['volume']['h6'])}
 Volume (24h): {format_usd(pair['volume']['h24'])}
 """
+                    twitter_handle = None
                     if 'websites' in pair['info']:
                         pair_info += "\n"
                         for site in pair['info']['websites']:
@@ -77,8 +84,13 @@ Volume (24h): {format_usd(pair['volume']['h24'])}
                         for social in pair['info']['socials']:
                             if social["type"].lower() == "twitter":
                                 pair_info += f'<a href="{social["url"]}">Twitter</a> + '
+                                twitter_handle = extract_twitter_handle(social["url"])
                             if social["type"].lower() == "telegram":
                                 pair_info += f'<a href="{social["url"]}">Telegram</a>'
+                    
+                    if twitter_handle:
+                        tweetscout_url = f"http://app.tweetscout.io/search?q={twitter_handle}"
+                        pair_info += f' + <a href="{tweetscout_url}">TweetScout</a>'
 
                     await update.message.reply_text(pair_info, parse_mode='HTML')
             else:
