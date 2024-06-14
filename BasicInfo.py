@@ -45,7 +45,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     
                     pair_info = f"""
 Base Token: {pair['baseToken']['name']} ({pair['baseToken']['symbol']})
-Pool URL: {pair['url']}
+Pool URL: <a href="{pair['url']}">dexscreener</a>
 Price (USD): {pair.get('priceUsd', 'N/A')}
 FDV: {format_usd(pair.get('fdv', 0))}
 Liquidity (USD): {format_usd(pair['liquidity'].get('usd', 0))}
@@ -56,7 +56,7 @@ Volume (1h): {format_usd(pair['volume']['h1'])}
 Volume (6h): {format_usd(pair['volume']['h6'])}
 Volume (24h): {format_usd(pair['volume']['h24'])}
 """
-                    await update.message.reply_text(pair_info)
+                    await update.message.reply_text(pair_info, parse_mode='HTML')
             else:
                 await update.message.reply_text("No pairs found for the given contract address.")
         else:
