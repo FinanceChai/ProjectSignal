@@ -46,7 +46,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     pair_info = f"""
 Token: {pair['baseToken']['name']} ({pair['baseToken']['symbol']})
 
-<a href="{pair['url']}">DexScreener</a> + <a href="https://rugcheck.xyz/{contract_address}">Rugcheck</a> + <a href="app.bubblemaps.io/sol/{contract_address}">BubbleMaps</a>
+<a href="{pair['url']}">DexScreener</a> + <a href="https://rugcheck.xyz/tokens/{contract_address}">Rugcheck</a> + <a href="app.bubblemaps.io/sol/{contract_address}">BubbleMaps</a>
 
 Overview
 Price (USD): {pair.get('priceUsd', 'N/A')}
