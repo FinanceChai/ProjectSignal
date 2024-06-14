@@ -86,7 +86,7 @@ Volume (24h): {format_usd(pair['volume']['h24'])}
                                 pair_info += f'<a href="{social["url"]}">Twitter</a> + '
                                 twitter_handle = extract_twitter_handle(social["url"])
                                 tweetscout_url = f"http://app.tweetscout.io/search?q={twitter_handle}"
-                                pair_info += f' + <a href="{tweetscout_url}">TweetScout</a> + '
+                                pair_info += f'<a href="{tweetscout_url}">TweetScout</a> + '
                             if social["type"].lower() == "telegram":
                                 pair_info += f'<a href="{social["url"]}">Telegram</a>'
                     
