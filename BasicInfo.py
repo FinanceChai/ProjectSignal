@@ -61,10 +61,10 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     if 'info' not in pair:
                         continue
 
-                    liquidity = pair['liquidity'].get('usd', 0)
-                    volume_h1 = pair['volume'].get('h1', 0)
-                    volume_h6 = pair['volume'].get('h6', 0)
-                    volume_h24 = pair['volume'].get('h24', 0)
+                    liquidity = pair.get('liquidity', {}).get('usd', 0)
+                    volume_h1 = pair.get('volume', {}).get('h1', 0)
+                    volume_h6 = pair.get('volume', {}).get('h6', 0)
+                    volume_h24 = pair.get('volume', {}).get('h24', 0)
                     txns = pair.get('txns', {})
 
                     buys_h1 = txns.get('h1', {}).get('buys', 0)
