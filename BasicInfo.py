@@ -44,16 +44,21 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     sells_h24 = txns.get('h24', {}).get('sells', 0)
                     
                     pair_info = f"""
-Base Token: {pair['baseToken']['name']} ({pair['baseToken']['symbol']})
-Pool URL: <a href="{pair['url']}">Dexscreener</a> + <a href="https://rugcheck.xyz/{contract_address}">Rugcheck</a>
+Token: {pair['baseToken']['name']} ({pair['baseToken']['symbol']})
+
+<a href="{pair['url']}">DexScreener</a> + <a href="https://rugcheck.xyz/{contract_address}">Rugcheck</a> + <a href="app.bubblemaps.io/sol/{contract_address}">BubbleMaps</a>
+
+Overview
 Price (USD): {pair.get('priceUsd', 'N/A')}
 FDV: {format_usd(pair.get('fdv', 0))}
 Liquidity (USD): {format_usd(pair['liquidity'].get('usd', 0))}
 
+Buy / Sell Ratios
 B/S Ratio (1h): {calculate_ratio(buys_h1, sells_h1)}
 B/S Ratio (6h): {calculate_ratio(buys_h6, sells_h6)}
 B/S Ratio (24h): {calculate_ratio(buys_h24, sells_h24)}
 
+Trading Volumes
 Volume (1h): {format_usd(pair['volume']['h1'])}
 Volume (6h): {format_usd(pair['volume']['h6'])}
 Volume (24h): {format_usd(pair['volume']['h24'])}
