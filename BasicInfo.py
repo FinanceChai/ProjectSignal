@@ -70,15 +70,15 @@ Volume (6h): {format_usd(pair['volume']['h6'])}
 Volume (24h): {format_usd(pair['volume']['h24'])}
 """
                     if 'websites' in pair['info']:
-                        pair_info += "\nWebsites\n"
+                        pair_info += "\n"
                         for site in pair['info']['websites']:
-                            pair_info += f'<a href="{site["url"]}">{site["label"]}</a>\n'
+                            pair_info += f'<a href="{site["url"]}">{site["label"]}</a> + '
                     if 'socials' in pair['info']:
                         for social in pair['info']['socials']:
                             if social["type"].lower() == "twitter":
-                                pair_info += f'<a href="{social["url"]}">Twitter</a>\n'
+                                pair_info += f'<a href="{social["url"]}">Twitter</a> + '
                             if social["type"].lower() == "telegram":
-                                pair_info += f'<a href="{social["url"]}">Telegram</a>\n'
+                                pair_info += f'<a href="{social["url"]}">Telegram</a>'
 
                     await update.message.reply_text(pair_info, parse_mode='HTML')
             else:
