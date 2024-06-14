@@ -92,6 +92,10 @@ Volume (24h): {format_usd(pair['volume']['h24'])}
                         tweetscout_url = f"http://app.tweetscout.io/search?q={twitter_handle}"
                         pair_info += f' + <a href="{tweetscout_url}">TweetScout</a>'
 
+                    # Remove the trailing " + " if it exists
+                    if pair_info.endswith(" + "):
+                        pair_info = pair_info[:-3]
+
                     await update.message.reply_text(pair_info, parse_mode='HTML')
             else:
                 await update.message.reply_text("No pairs found for the given contract address.")
