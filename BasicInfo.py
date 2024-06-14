@@ -29,6 +29,12 @@ def extract_twitter_handle(url):
         return url.split("/")[-1]
     return None
 
+# Function to ensure URLs start with https://
+def ensure_https(url):
+    if not url.startswith("https://"):
+        return "https://" + url
+    return url
+
 # Function to search for token information
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.args:
@@ -91,7 +97,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                             if social["type"].lower() == "twitter" and not twitter_handle:
                                 twitter_handle = extract_twitter_handle(social["url"])
                             if social["type"].lower() == "telegram" and not telegram_url:
-                                telegram_url = social["url"]
+                                telegram_url = ensure_https(social["url"])
 
                 pair_info = f"""
 Token: {base_token_name} ({base_token_symbol})
