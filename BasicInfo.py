@@ -48,10 +48,10 @@ Base Token: {pair['baseToken']['name']} ({pair['baseToken']['symbol']})
 Pool URL: <a href="{pair['url']}">dexscreener</a>
 Price (USD): {pair.get('priceUsd', 'N/A')}
 FDV: {format_usd(pair.get('fdv', 0))}
-Liquidity (USD): {format_usd(pair['liquidity'].get('usd', 0))}
+Liquidity (USD): {format_usd(pair['liquidity'].get('usd', 0))/n}
 B/S Ratio (1h): {calculate_ratio(buys_h1, sells_h1)}
 B/S Ratio (6h): {calculate_ratio(buys_h6, sells_h6)}
-B/S Ratio (24h): {calculate_ratio(buys_h24, sells_h24)}
+B/S Ratio (24h): {calculate_ratio(buys_h24, sells_h24)/n}
 Volume (1h): {format_usd(pair['volume']['h1'])}
 Volume (6h): {format_usd(pair['volume']['h6'])}
 Volume (24h): {format_usd(pair['volume']['h24'])}
