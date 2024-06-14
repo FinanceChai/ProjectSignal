@@ -21,7 +21,7 @@ def calculate_ratio(buys, sells):
 
 # Function to format USD values
 def format_usd(value):
-    return f"${value:,.2f}"
+    return f"${value:,f}"
 
 # Function to search for token information
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
