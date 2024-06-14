@@ -40,11 +40,33 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             data = response.json()
             pairs = data.get('pairs', [])
             if pairs:
+                total_liquidity = 0
+                total_volume_h1 = 0
+                total_volume_h6 = 0
+                total_volume_h24 = 0
+                total_buys_h1 = 0
+                total_sells_h1 = 0
+                total_buys_h6 = 0
+                total_sells_h6 = 0
+                total_buys_h24 = 0
+                total_sells_h24 = 0
+                base_token_name = pairs[0]['baseToken']['name']
+                base_token_symbol = pairs[0]['baseToken']['symbol']
+                dex_url = pairs[0]['url']
+                rugcheck_url = f"https://rugcheck.xyz/{contract_address}"
+                bubblemaps_url = f"http://app.bubblemaps.io/sol/{contract_address}"
+                twitter_handle = None
+
                 for pair in pairs:
                     if 'info' not in pair:
                         continue
 
+                    liquidity = pair['liquidity'].get('usd', 0)
+                    volume_h1 = pair['volume'].get('h1', 0)
+                    volume_h6 = pair['volume'].get('h6', 0)
+                    volume_h24 = pair['volume'].get('h24', 0)
                     txns = pair.get('txns', {})
+
                     buys_h1 = txns.get('h1', {}).get('buys', 0)
                     sells_h1 = txns.get('h1', {}).get('sells', 0)
                     buys_h6 = txns.get('h6', {}).get('buys', 0)
@@ -52,55 +74,56 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     buys_h24 = txns.get('h24', {}).get('buys', 0)
                     sells_h24 = txns.get('h24', {}).get('sells', 0)
 
-                    base_token_name = pair['baseToken']['name']
-                    base_token_symbol = pair['baseToken']['symbol']
-                    dex_url = pair['url']
-                    rugcheck_url = f"https://rugcheck.xyz/{contract_address}"
-                    bubblemaps_url = f"http://app.bubblemaps.io/sol/{contract_address}"
-                    
-                    pair_info = f"""
+                    total_liquidity += liquidity
+                    total_volume_h1 += volume_h1
+                    total_volume_h6 += volume_h6
+                    total_volume_h24 += volume_h24
+                    total_buys_h1 += buys_h1
+                    total_sells_h1 += sells_h1
+                    total_buys_h6 += buys_h6
+                    total_sells_h6 += sells_h6
+                    total_buys_h24 += buys_h24
+                    total_sells_h24 += sells_h24
+
+                    if 'socials' in pair['info']:
+                        for social in pair['info']['socials']:
+                            if social["type"].lower() == "twitter" and not twitter_handle:
+                                twitter_handle = extract_twitter_handle(social["url"])
+
+                pair_info = f"""
 Token: {base_token_name} ({base_token_symbol})
 
 <a href="{dex_url}">DexScreener</a> + <a href="{rugcheck_url}">Rugcheck</a> + <a href="{bubblemaps_url}">BubbleMaps</a>
 
 Overview
-Price (USD): {pair.get('priceUsd', 'N/A')}
-FDV: {format_usd(pair.get('fdv', 0))}
-Liquidity (USD): {format_usd(pair['liquidity'].get('usd', 0))}
+Price (USD): {pairs[0].get('priceUsd', 'N/A')}
+FDV: {format_usd(pairs[0].get('fdv', 0))}
+Liquidity (USD): {format_usd(total_liquidity)}
 
 Buy / Sell Ratios
-B/S Ratio (1h): {calculate_ratio(buys_h1, sells_h1)}
-B/S Ratio (6h): {calculate_ratio(buys_h6, sells_h6)}
-B/S Ratio (24h): {calculate_ratio(buys_h24, sells_h24)}
+B/S Ratio (1h): {calculate_ratio(total_buys_h1, total_sells_h1)}
+B/S Ratio (6h): {calculate_ratio(total_buys_h6, total_sells_h6)}
+B/S Ratio (24h): {calculate_ratio(total_buys_h24, total_sells_h24)}
 
 Trading Volumes
-Volume (1h): {format_usd(pair['volume']['h1'])}
-Volume (6h): {format_usd(pair['volume']['h6'])}
-Volume (24h): {format_usd(pair['volume']['h24'])}
+Volume (1h): {format_usd(total_volume_h1)}
+Volume (6h): {format_usd(total_volume_h6)}
+Volume (24h): {format_usd(total_volume_h24)}
 """
-                    twitter_handle = None
-                    if 'websites' in pair['info']:
-                        pair_info += "\n"
-                        for site in pair['info']['websites']:
-                            pair_info += f'<a href="{site["url"]}">{site["label"]}</a> + '
-                    if 'socials' in pair['info']:
-                        for social in pair['info']['socials']:
-                            if social["type"].lower() == "twitter":
-                                pair_info += f'<a href="{social["url"]}">Twitter</a> + '
-                                twitter_handle = extract_twitter_handle(social["url"])
-                            if social["type"].lower() == "telegram":
-                                pair_info += f'<a href="{social["url"]}">Telegram</a>'
-                    
-                    if twitter_handle:
-                        tweetscout_url = f"http://app.tweetscout.io/search?q={twitter_handle}"
-                        pair_info += f' + <a href="{tweetscout_url}">TweetScout</a>'
+                if 'websites' in pairs[0]['info']:
+                    pair_info += "\n"
+                    for site in pairs[0]['info']['websites']:
+                        pair_info += f'<a href="{site["url"]}">{site["label"]}</a> + '
 
-                    # Remove the trailing " + " if it exists
-                    if pair_info.endswith(" + "):
-                        pair_info = pair_info[:-3]
+                if twitter_handle:
+                    tweetscout_url = f"http://app.tweetscout.io/search?q={twitter_handle}"
+                    pair_info += f'<a href="{tweetscout_url}">TweetScout</a>'
 
-                    await update.message.reply_text(pair_info, parse_mode='HTML')
-                    break  # Exit after processing the first valid pair
+                # Remove the trailing " + " if it exists
+                if pair_info.endswith(" + "):
+                    pair_info = pair_info[:-3]
+
+                await update.message.reply_text(pair_info, parse_mode='HTML')
             else:
                 await update.message.reply_text("No pairs found for the given contract address.")
         else:
