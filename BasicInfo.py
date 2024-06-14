@@ -56,6 +56,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 rugcheck_url = f"https://rugcheck.xyz/{contract_address}"
                 bubblemaps_url = f"http://app.bubblemaps.io/sol/{contract_address}"
                 twitter_handle = None
+                telegram_url = None
 
                 for pair in pairs:
                     if 'info' not in pair:
@@ -89,6 +90,8 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         for social in pair['info']['socials']:
                             if social["type"].lower() == "twitter" and not twitter_handle:
                                 twitter_handle = extract_twitter_handle(social["url"])
+                            if social["type"].lower() == "telegram" and not telegram_url:
+                                telegram_url = social["url"]
 
                 pair_info = f"""
 Token: {base_token_name} ({base_token_symbol})
@@ -117,7 +120,11 @@ Volume (24h): {format_usd(total_volume_h24)}
 
                 if twitter_handle:
                     tweetscout_url = f"http://app.tweetscout.io/search?q={twitter_handle}"
-                    pair_info += f'<a href="{tweetscout_url}">TweetScout</a>'
+                    pair_info += f'<a href="{tweetscout_url}">TweetScout</a> + '
+                    pair_info += f'<a href="https://twitter.com/{twitter_handle}">Twitter</a> + '
+
+                if telegram_url:
+                    pair_info += f'<a href="{telegram_url}">Telegram</a>'
 
                 # Remove the trailing " + " if it exists
                 if pair_info.endswith(" + "):
