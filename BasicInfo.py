@@ -19,6 +19,10 @@ def calculate_ratio(buys, sells):
         return "N/A" if buys == 0 else f"{buys:.1f}x"
     return f"{(buys / sells):.1f}x"
 
+# Function to format USD values
+def format_usd(value):
+    return f"${value:,.2f}"
+
 # Function to search for token information
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.args:
@@ -43,14 +47,14 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 Base Token: {pair['baseToken']['name']} ({pair['baseToken']['symbol']})
 Pool URL: {pair['url']}
 Price (USD): {pair.get('priceUsd', 'N/A')}
-FDV: {pair.get('fdv', 'N/A')}
-Liquidity (USD): {pair['liquidity'].get('usd', 'N/A')}
+FDV: {format_usd(pair.get('fdv', 0))}
+Liquidity (USD): {format_usd(pair['liquidity'].get('usd', 0))}
 B/S Ratio (1h): {calculate_ratio(buys_h1, sells_h1)}
 B/S Ratio (6h): {calculate_ratio(buys_h6, sells_h6)}
 B/S Ratio (24h): {calculate_ratio(buys_h24, sells_h24)}
-Volume (1h): {pair['volume']['h1']}
-Volume (6h): {pair['volume']['h6']}
-Volume (24h): {pair['volume']['h24']}
+Volume (1h): {format_usd(pair['volume']['h1'])}
+Volume (6h): {format_usd(pair['volume']['h6'])}
+Volume (24h): {format_usd(pair['volume']['h24'])}
 """
                     await update.message.reply_text(pair_info)
             else:
