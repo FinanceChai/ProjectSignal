@@ -26,17 +26,14 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             if pairs:
                 for pair in pairs:
                     pair_info = f"""
-Chain ID: {pair['chainId']}
-DEX ID: {pair['dexId']}
-URL: {pair['url']}
-Pair Address: {pair['pairAddress']}
 Base Token: {pair['baseToken']['name']} ({pair['baseToken']['symbol']})
-Quote Token: {pair['quoteToken']['symbol']}
-Price (Native): {pair['priceNative']}
+Pool URL: {pair['url']}
 Price (USD): {pair.get('priceUsd', 'N/A')}
-Volume (24h): {pair['volume']['h24']}
+FDV: {pair.get('fdv', 'N/A')}
 Liquidity (USD): {pair['liquidity'].get('usd', 'N/A')}
-Pair Created At: {pair['pairCreatedAt']}
+Volume (1h): {pair['volume']['h1']}
+Volume (6h): {pair['volume']['h6']}
+Volume (24h): {pair['volume']['h24']}
 """
                     await update.message.reply_text(pair_info)
             else:
