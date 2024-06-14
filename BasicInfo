@@ -52,7 +52,7 @@ def cancel(update: Update, context: CallbackContext) -> int:
 
 def main() -> None:
     # Create the Updater and pass it your bot's token
-    updater = Updater("YOUR_TELEGRAM_BOT_API_TOKEN")
+    updater = Updater("TELEGRAM_BOT_TOKEN")
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
