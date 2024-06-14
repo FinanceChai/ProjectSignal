@@ -41,6 +41,9 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             pairs = data.get('pairs', [])
             if pairs:
                 for pair in pairs:
+                    if 'info' not in pair:
+                        continue
+
                     txns = pair.get('txns', {})
                     buys_h1 = txns.get('h1', {}).get('buys', 0)
                     sells_h1 = txns.get('h1', {}).get('sells', 0)
@@ -85,16 +88,19 @@ Volume (24h): {format_usd(pair['volume']['h24'])}
                             if social["type"].lower() == "twitter":
                                 pair_info += f'<a href="{social["url"]}">Twitter</a> + '
                                 twitter_handle = extract_twitter_handle(social["url"])
-                                tweetscout_url = f"http://app.tweetscout.io/search?q={twitter_handle}"
-                                pair_info += f'<a href="{tweetscout_url}">TweetScout</a> + '
                             if social["type"].lower() == "telegram":
                                 pair_info += f'<a href="{social["url"]}">Telegram</a>'
                     
+                    if twitter_handle:
+                        tweetscout_url = f"http://app.tweetscout.io/search?q={twitter_handle}"
+                        pair_info += f' + <a href="{tweetscout_url}">TweetScout</a>'
+
                     # Remove the trailing " + " if it exists
                     if pair_info.endswith(" + "):
                         pair_info = pair_info[:-3]
 
                     await update.message.reply_text(pair_info, parse_mode='HTML')
+                    break  # Exit after processing the first valid pair
             else:
                 await update.message.reply_text("No pairs found for the given contract address.")
         else:
