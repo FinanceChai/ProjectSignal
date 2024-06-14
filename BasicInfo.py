@@ -38,7 +38,6 @@ Volume (24h): {pair['volume']['h24']}
 Liquidity (USD): {pair['liquidity'].get('usd', 'N/A')}
 Pair Created At: {pair['pairCreatedAt']}
 """
-                    # Adding website, Twitter, and Telegram links if available
                     if 'info' in pair:
                         info = pair['info']
                         if 'websites' in info:
